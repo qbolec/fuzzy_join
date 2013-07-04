@@ -23,7 +23,12 @@ $join_fields[] = get_or($options,'2',1)-1;
 $plus = get_or($options,'plus',0);
 $minus = get_or($options,'minus',0);
 foreach($filenames as $i => $name){
-  $handle = @fopen(($name==='-'?'php://stdin':$name),'rb');
+  if($name==='-'){
+    $name='php://stdin';
+  }else if(preg_match('@^/dev/fd/(\d+)$@',$name,$match)){
+    $name='php://fd/'.$match[1];
+  }
+  $handle = @fopen($name,'rb');
   if(false===$handle){
     echo "Could not open file $name\n";
     die(1);
